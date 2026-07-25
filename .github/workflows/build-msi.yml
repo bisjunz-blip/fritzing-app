@@ -18,14 +18,18 @@ jobs:
         with:
           python-version: '3.11'
 
+      # Menginstal Qt 6.5.3 versi v4 (mendukung Node.js 24)
       - name: Install Qt Framework
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: '6.5.3'
-          host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2019_64'
-          modules: 'qtserialport qtsvg'
+          cache: 'true'
+
+      # Mengaktifkan MSVC Compiler (cl.exe & link.exe)
+      - name: Setup MSVC Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Install WiX Toolset via Choco
         run: |
