@@ -14,13 +14,13 @@ jobs:
           path: fritzing-app
           submodules: recursive
 
-      - name: Checkout fritzing-parts (Pustaka Komponen)
+      - name: Checkout fritzing-parts (Library Komponen)
         uses: actions/checkout@v4
         with:
           repository: fritzing/fritzing-parts
           path: fritzing-parts
 
-      - name: Install Dependencies via Vcpkg (Boost & Libgit2)
+      - name: Install Pustaka Dependensi (Boost & Libgit2)
         run: |
           vcpkg install libgit2:x64-windows boost-property-tree:x64-windows boost-spirit:x64-windows quazip:x64-windows
 
@@ -32,32 +32,19 @@ jobs:
           arch: 'win64_msvc2019_64'
           cache: 'true'
 
-      - name: Setup MSVC Developer Command Prompt
+      - name: Setup MSVC Compiler Environment
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install WiX Toolset
-        run: |
-          choco install wixtoolset -y
-
-      - name: Configure CMake
+      # Menggunakan qmake & nmake standar Qt (Bukan CMake)
+      - name: Run QMake and Compile Fritzing
         run: |
           cd fritzing-app
-          mkdir build
-          cd build
-          cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+          qmake phoenix.pro "CONFIG+=release"
+          nmake
 
-      - name: Build Fritzing
-        run: |
-          cd fritzing-app/build
-          cmake --build . --config Release --parallel
-
-      - name: Package MSI via CPack
-        run: |
-          cd fritzing-app/build
-          cpack -G WIX -C Release
-
-      - name: Upload MSI Artifact
+      # Mengunggah hasil kompilasi executable Fritzing
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Fritzing-Installer-MSI
-          path: fritzing-app/build/*.msi
+          name: Fritzing-Executable-Build
+          path: fritzing-app/release/
