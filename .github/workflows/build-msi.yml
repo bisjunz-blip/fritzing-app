@@ -13,13 +13,13 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Python (untuk script pendukung)
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Install Qt Framework
-        uses: jurplel/install-qt@v3
+        uses: ddalcino/install-qt-action@v1
         with:
           version: '6.5.3'
           arch: 'win64_msvc2019_64'
