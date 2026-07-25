@@ -1,24 +1,29 @@
 name: Build Fritzing MSI Installer
 
 on:
-  workflow_dispatch: # Memungkinkan Anda menjalankan build secara manual dari tab Actions
+  workflow_dispatch:
 
 jobs:
   build-windows:
     runs-on: windows-2022
 
     steps:
-      - name: Checkout fritzing-app code
+      - name: Checkout fritzing-app
         uses: actions/checkout@v4
         with:
+          path: fritzing-app
           submodules: recursive
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Checkout fritzing-parts (Pustaka Komponen)
+        uses: actions/checkout@v4
         with:
-          python-version: '3.11'
+          repository: fritzing/fritzing-parts
+          path: fritzing-parts
 
-      # Menginstal Qt 6.5.3 versi v4 (mendukung Node.js 24)
+      - name: Install Dependencies via Vcpkg (Boost & Libgit2)
+        run: |
+          vcpkg install libgit2:x64-windows boost-property-tree:x64-windows boost-spirit:x64-windows quazip:x64-windows
+
       - name: Install Qt Framework
         uses: jurplel/install-qt-action@v4
         with:
@@ -27,32 +32,32 @@ jobs:
           arch: 'win64_msvc2019_64'
           cache: 'true'
 
-      # Mengaktifkan MSVC Compiler (cl.exe & link.exe)
       - name: Setup MSVC Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install WiX Toolset via Choco
+      - name: Install WiX Toolset
         run: |
           choco install wixtoolset -y
 
       - name: Configure CMake
         run: |
+          cd fritzing-app
           mkdir build
           cd build
-          cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+          cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
-      - name: Build Fritzing (Release)
+      - name: Build Fritzing
         run: |
-          cd build
+          cd fritzing-app/build
           cmake --build . --config Release --parallel
 
       - name: Package MSI via CPack
         run: |
-          cd build
+          cd fritzing-app/build
           cpack -G WIX -C Release
 
       - name: Upload MSI Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Fritzing-Installer-MSI
-          path: build/*.msi
+          path: fritzing-app/build/*.msi
