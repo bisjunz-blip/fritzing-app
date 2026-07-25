@@ -35,14 +35,13 @@ jobs:
       - name: Setup MSVC Compiler Environment
         uses: ilammy/msvc-dev-cmd@v1
 
-      # Menggunakan qmake & nmake standar Qt (Bukan CMake)
+      # Menggunakan qmake & nmake (Bukan CMake)
       - name: Run QMake and Compile Fritzing
         run: |
           cd fritzing-app
           qmake phoenix.pro "CONFIG+=release"
           nmake
 
-      # Mengunggah hasil kompilasi executable Fritzing
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
