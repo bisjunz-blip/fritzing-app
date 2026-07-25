@@ -16,12 +16,14 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install Qt Framework
-        uses: ddalcino/install-qt-action@v1
+        uses: jurplel/install-qt-action@v3
         with:
           version: '6.5.3'
+          host: 'windows'
+          target: 'desktop'
           arch: 'win64_msvc2019_64'
           modules: 'qtserialport qtsvg'
 
