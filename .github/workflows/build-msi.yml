@@ -1,0 +1,52 @@
+name: Build Fritzing MSI Installer
+
+on:
+  workflow_dispatch: # Memungkinkan Anda menjalankan build secara manual dari tab Actions
+
+jobs:
+  build-windows:
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout fritzing-app code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Python (untuk script pendukung)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Qt Framework
+        uses: jurplel/install-qt@v3
+        with:
+          version: '6.5.3'
+          arch: 'win64_msvc2019_64'
+          modules: 'qtserialport qtsvg'
+
+      - name: Install WiX Toolset via Choco
+        run: |
+          choco install wixtoolset -y
+
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Fritzing (Release)
+        run: |
+          cd build
+          cmake --build . --config Release --parallel
+
+      - name: Package MSI via CPack
+        run: |
+          cd build
+          cpack -G WIX -C Release
+
+      - name: Upload MSI Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fritzing-Installer-MSI
+          path: build/*.msi
