@@ -44,11 +44,11 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       # Langkah baru: Kompilasi libgit2 terlebih dahulu
-      - name: Build libgit2
+        name: Build libgit2
         run: |
           cd libgit2
-          mkdir build
-          cd build
+          mkdir build64
+          cd build64
           cmake .. -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF
           cmake --build . --config Release
 
