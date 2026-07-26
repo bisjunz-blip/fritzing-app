@@ -27,11 +27,11 @@ jobs:
           ref: v1.7.2
           path: libgit2
 
-      # URL unduhan Boost diperbarui ke archives.boost.io
-      - name: Download Boost Headers
+      # Mengunduh & Mengekstrak Boost 1.81.0 (Versi Kompatibel Fritzing)
+      - name: Download & Extract Boost 1.81.0
         run: |
-          curl.exe -sL "https://archives.boost.io/release/1.83.0/source/boost_1_83_0.zip" -o "boost.zip"
-          Expand-Archive -Path "boost.zip" -DestinationPath "."
+          curl.exe -sL "https://archives.boost.io/release/1.81.0/source/boost_1_81_0.zip" -o "boost.zip"
+          tar.exe -xf boost.zip
 
       - name: Install Qt Framework
         uses: jurplel/install-qt-action@v4
@@ -55,7 +55,7 @@ jobs:
       - name: Run QMake and Compile Fritzing
         run: |
           cd fritzing-app
-          qmake phoenix.pro "CONFIG+=release"
+          qmake phoenix.pro "CONFIG+=release" "boost_root=D:/a/fritzing-app/fritzing-app/boost_1_81_0"
           nmake
 
       - name: Upload Build Artifact
