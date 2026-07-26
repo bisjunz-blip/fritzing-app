@@ -44,7 +44,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
 
       # Langkah baru: Kompilasi libgit2 terlebih dahulu
-        name: Build libgit2
+      - name: Build libgit2
         run: |
           cd libgit2
           mkdir build64
