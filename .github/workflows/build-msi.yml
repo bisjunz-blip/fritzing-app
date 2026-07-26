@@ -27,11 +27,24 @@ jobs:
           ref: v1.7.2
           path: libgit2
 
-      # Mengunduh & Mengekstrak Boost 1.81.0 (Versi Kompatibel Fritzing)
       - name: Download & Extract Boost 1.81.0
         run: |
           curl.exe -sL "https://archives.boost.io/release/1.81.0/source/boost_1_81_0.zip" -o "boost.zip"
           tar.exe -xf boost.zip
+
+      # Mengunduh ngspice-42, svgpp, dan quazip sekaligus
+      - name: Download & Setup ngspice, svgpp & quazip
+        run: |
+          curl.exe -sL "https://sourceforge.net/projects/ngspice/files/ng-spice-rework/42/ngspice-42_64.zip/download" -o "ngspice.zip"
+          tar.exe -xf ngspice.zip
+          if (Test-Path "Spice64") { Move-Item "Spice64" "ngspice-42" }
+          if (Test-Path "ngspice-42_64") { Move-Item "ngspice-42_64" "ngspice-42" }
+
+          curl.exe -sL "https://github.com/svgpp/svgpp/archive/refs/tags/v1.3.1.zip" -o "svgpp.zip"
+          tar.exe -xf svgpp.zip
+
+          curl.exe -sL "https://github.com/stachenov/quazip/archive/refs/tags/v1.4.zip" -o "quazip.zip"
+          tar.exe -xf quazip.zip
 
       - name: Install Qt Framework
         uses: jurplel/install-qt-action@v4
