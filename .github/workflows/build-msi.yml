@@ -27,10 +27,10 @@ jobs:
           ref: v1.7.2
           path: libgit2
 
-      # Mengunduh Boost secara cepat (tanpa vcpkg 98 paket)
+      # URL unduhan Boost diperbarui ke archives.boost.io
       - name: Download Boost Headers
         run: |
-          Invoke-WebRequest -Uri "https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost_1_83_0.zip" -OutFile "boost.zip"
+          curl.exe -sL "https://archives.boost.io/release/1.83.0/source/boost_1_83_0.zip" -o "boost.zip"
           Expand-Archive -Path "boost.zip" -DestinationPath "."
 
       - name: Install Qt Framework
