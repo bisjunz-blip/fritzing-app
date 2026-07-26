@@ -20,7 +20,6 @@ jobs:
           repository: fritzing/fritzing-parts
           path: fritzing-parts
 
-      # Langkah baru: Checkout libgit2 di folder sejajar
       - name: Checkout libgit2
         uses: actions/checkout@v4
         with:
@@ -43,7 +42,6 @@ jobs:
       - name: Setup MSVC Compiler Environment
         uses: ilammy/msvc-dev-cmd@v1
 
-      # Langkah baru: Kompilasi libgit2 terlebih dahulu
       - name: Build libgit2
         run: |
           cd libgit2
@@ -52,11 +50,10 @@ jobs:
           cmake .. -G "Visual Studio 17 2022" -A x64 -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF
           cmake --build . --config Release
 
-      # Jalankan QMake & Build Fritzing
       - name: Run QMake and Compile Fritzing
         run: |
           cd fritzing-app
-          qmake phoenix.pro "CONFIG+=release"
+          qmake phoenix.pro "CONFIG+=release" "boost_root=C:/vcpkg/installed/x64-windows/include"
           nmake
 
       - name: Upload Build Artifact
