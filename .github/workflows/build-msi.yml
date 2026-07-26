@@ -27,9 +27,11 @@ jobs:
           ref: v1.7.2
           path: libgit2
 
-      - name: Install Dependencies via Vcpkg
+      # Mengunduh Boost secara cepat (tanpa vcpkg 98 paket)
+      - name: Download Boost Headers
         run: |
-          vcpkg install boost-property-tree:x64-windows boost-spirit:x64-windows quazip:x64-windows
+          Invoke-WebRequest -Uri "https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost_1_83_0.zip" -OutFile "boost.zip"
+          Expand-Archive -Path "boost.zip" -DestinationPath "."
 
       - name: Install Qt Framework
         uses: jurplel/install-qt-action@v4
@@ -53,7 +55,7 @@ jobs:
       - name: Run QMake and Compile Fritzing
         run: |
           cd fritzing-app
-          qmake phoenix.pro "CONFIG+=release" "boost_root=C:/vcpkg/installed/x64-windows/include"
+          qmake phoenix.pro "CONFIG+=release"
           nmake
 
       - name: Upload Build Artifact
